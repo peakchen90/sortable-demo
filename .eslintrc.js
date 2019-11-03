@@ -16,6 +16,8 @@ module.exports = {
     'global-require': 'off',
     'no-console': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-plusplus': 'off',
+    'no-underscore-dangle': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint',
