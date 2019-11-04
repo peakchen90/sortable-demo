@@ -6,6 +6,7 @@
     <slot></slot>
 
     <draggable-content
+      v-if="enable"
       v-bind="$attrs"
       v-on="$listeners">
     </draggable-content>
@@ -24,6 +25,21 @@ export default {
 
   components: {
     draggableContent,
+  },
+
+  data() {
+    return {
+      enable: true,
+    };
+  },
+
+  methods: {
+    refresh() {
+      this.enable = false;
+      this.$nextTick(() => {
+        this.enable = true;
+      });
+    },
   },
 };
 </script>
