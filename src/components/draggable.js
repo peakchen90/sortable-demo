@@ -91,7 +91,7 @@ export default {
       scroll: true,
       multiDrag: true,
       animation: 150,
-      multiDragKey: 'CTRL',
+      multiDragKey: /Mac OS/.test(navigator.userAgent) ? 'Meta' : 'Control',
       emptyInsertThreshold: 50,
       onStart: ({ oldIndex, oldIndicies }) => {
         if (oldIndicies.length > 0) {
