@@ -1,19 +1,20 @@
 <template>
   <div class="demo1">
-
     <div class="left-group">
       <draggable
         v-model="left"
         custom-class="left-content"
         group="def">
         <h2 slot="header">LEFT</h2>
-        <div
-          v-for="item in left"
-          :key="item.name"
-          class="img-item">
-          <span class="img-name">{{item.name}}</span>
-          <img :src="item.url" :alt="item.name">
-        </div>
+
+        <draggable-item v-slot="item">
+          <div
+            :key="item.name"
+            class="img-item">
+            <span class="img-name">{{item.name}}</span>
+            <img :src="item.url" :alt="item.name">
+          </div>
+        </draggable-item>
       </draggable>
 
       <div class="draggable-data">
@@ -25,16 +26,18 @@
     <div class="right-group">
       <draggable
         v-model="right"
-        custom-class="right-content"
+        custom-class="left-content"
         group="def">
         <h2 slot="header">RIGHT</h2>
-        <div
-          v-for="item in right"
-          :key="item.name"
-          class="img-item">
-          <span class="img-name">{{item.name}}</span>
-          <img :src="item.url" :alt="item.name">
-        </div>
+
+        <draggable-item v-slot="item">
+          <div
+            :key="item.name"
+            class="img-item">
+            <span class="img-name">{{item.name}}</span>
+            <img :src="item.url" :alt="item.name">
+          </div>
+        </draggable-item>
       </draggable>
 
       <div class="draggable-data">
@@ -46,12 +49,8 @@
 </template>
 
 <script>
-import draggable from '@/components/draggable';
-
 export default {
-  components: {
-    draggable,
-  },
+  components: {},
   data() {
     return {
       left: [

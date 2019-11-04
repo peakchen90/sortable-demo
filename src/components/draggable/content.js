@@ -30,7 +30,7 @@ const manager = {
 
 
 export default {
-  name: 'draggable',
+  name: 'draggable-content',
 
   inheritAttrs: false,
 
@@ -50,6 +50,12 @@ export default {
     group: [String, Object],
   },
 
+  data() {
+    return {
+      data: [],
+    };
+  },
+
   methods: {
     serializeIndexes(evt) {
       const {
@@ -66,6 +72,13 @@ export default {
         [newIndex],
       ];
     },
+    getNewIndex(evt) {
+      const { newIndex, newIndicies } = evt;
+      if (newIndicies.length > 1) {
+        return newIndicies[0].index;
+      }
+      return newIndex;
+    },
     removeItems(indexes) {
       const copies = [...indexes].sort((a, b) => b - a);
       return copies.map(index => this.value.splice(index, 1)[0]).reverse();
@@ -80,12 +93,13 @@ export default {
     },
   },
 
-  beforeCreate() {
+  created() {
+    this.data = [...this.value];
     this.instanceId = manager.nextId();
   },
 
   mounted() {
-    this.sortable = Sortable.create(this.$refs.draggable, {
+    this.sortable = Sortable.create(this.$refs.content, {
       group: this.group,
       sort: true,
       scroll: true,
@@ -118,7 +132,8 @@ export default {
 
         const from = manager.find(evt.from);
         if (from && from.selected.length > 0) {
-          this.value.splice(evt.newIndex, 0, ...from.selected);
+          const newIndex = this.getNewIndex(evt);
+          this.value.splice(newIndex, 0, ...from.selected);
           this.emitInputEvent();
         }
       },
@@ -144,22 +159,14 @@ export default {
     manager.remove(this.instanceId);
   },
 
-  render(h) {
-    return h(
-      'div',
-      { class: 'draggable-wrapper' },
-      [
-        this.$slots.header,
-        h(
-          this.tag,
-          {
-            ref: 'draggable',
-            class: this.customClass,
-          },
-          this.$slots.default,
-        ),
-        this.$slots.footer,
-      ],
+  render() {
+    return (
+      <div class={this.customClass} ref="content">
+        {this.$parent._renderItem
+          ? this.data.map(item => this.$parent._renderItem(item))
+          : null
+        }
+      </div>
     );
   },
 };
