@@ -1,6 +1,7 @@
 import { Sortable, MultiDrag } from 'sortablejs';
+import DragIntoPlugin from './DragIntoPlugin';
 
-Sortable.mount(new MultiDrag());
+Sortable.mount(new MultiDrag(), new DragIntoPlugin());
 
 const manager = {
   _nextId: 0,
@@ -48,6 +49,22 @@ export default {
       default: 'draggable-content',
     },
     group: [String, Object],
+    emptyInsertThreshold: {
+      type: Number,
+      default: 0,
+    },
+    onStart: {
+      type: Function,
+      default: null,
+    },
+    onMove: {
+      type: Function,
+      default: null,
+    },
+    onEnd: {
+      type: Function,
+      default: null,
+    },
   },
 
   data() {
@@ -88,6 +105,21 @@ export default {
       this.value.splice(newIndexes[0], 0, ...removed);
       this.emitInputEvent();
     },
+    setAttachData(evt) {
+      const {
+        from, to, dragged, related,
+      } = evt;
+
+      const draggedIndex = [].findIndex.call(from.children, c => c === dragged);
+      const relatedIndex = [].findIndex.call(to.children, c => c === related);
+      // eslint-disable-next-line no-param-reassign
+      evt.data = {
+        current: this.current,
+        selected: this.current.selected,
+        dragged: manager.find(from).instance.value[draggedIndex],
+        related: manager.find(to).instance.value[relatedIndex],
+      };
+    },
     emitInputEvent() {
       this.$emit('input', this.value);
     },
@@ -104,14 +136,19 @@ export default {
       sort: true,
       scroll: true,
       multiDrag: true,
+      dragInto: true,
       animation: 150,
       multiDragKey: /Mac OS/.test(navigator.userAgent) ? 'Meta' : 'Control',
-      emptyInsertThreshold: 50,
-      onStart: ({ oldIndex, oldIndicies }) => {
+      emptyInsertThreshold: this.emptyInsertThreshold,
+      onStart: (evt) => {
+        const { oldIndex, oldIndicies } = evt;
         if (oldIndicies.length > 0) {
           this.current.selected = oldIndicies.map(i => this.value[i.index]);
         } else {
           this.current.selected = [this.value[oldIndex]];
+        }
+        if (this.onStart) {
+          this.onStart(evt);
         }
       },
       onUpdate: (evt) => {
@@ -146,6 +183,18 @@ export default {
         const [oldIndexes] = this.serializeIndexes(evt);
         this.removeItems(oldIndexes);
         this.emitInputEvent();
+      },
+      onMove: (evt, originalEvent) => {
+        if (this.onMove) {
+          this.setAttachData(evt);
+          return this.onMove(evt, originalEvent);
+        }
+        return true;
+      },
+      onEnd: (evt) => {
+        if (this.onEnd) {
+          this.onEnd(evt);
+        }
       },
     });
 
