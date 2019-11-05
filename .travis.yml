@@ -1,6 +1,7 @@
 language: node_js
+
 node_js:
-  - "node"
+  - "11"
 
 cache: npm
 
@@ -13,3 +14,6 @@ deploy:
   local_dir: dist
   on:
     branch: master
+
+notifications:
+  email: false
