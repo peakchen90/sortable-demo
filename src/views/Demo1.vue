@@ -4,15 +4,17 @@
       <draggable
         v-model="left"
         custom-class="left-content"
+        :onStart="onStart"
+        :onDragInto="onDragInto"
         group="def">
         <h2 slot="header">LEFT</h2>
 
         <draggable-item v-slot="item">
           <div
             :key="item.name"
-            class="img-item">
-            <span class="img-name">{{item.name}}</span>
-            <img :src="item.url" :alt="item.name">
+            class="dir-item">
+            {{item.name}}
+            <span class="dir-num" v-if="item.children.length > 0">({{item.children.length}})</span>
           </div>
         </draggable-item>
       </draggable>
@@ -26,7 +28,8 @@
     <div class="right-group">
       <draggable
         v-model="right"
-        custom-class="left-content"
+        :onDragInto="onDragInto"
+        custom-class="right-content"
         group="def">
         <h2 slot="header">RIGHT</h2>
 
@@ -49,70 +52,37 @@
 </template>
 
 <script>
+// import throttle from 'lodash/throttle';
+// import debounce from 'lodash/debounce';
 export default {
   components: {},
   data() {
     return {
       left: [
         {
-          name: '图片1',
-          url: require('@/assets/1.jpg'),
+          isDir: true,
+          name: '目录1',
+          children: [],
         },
         {
-          name: '图片2',
-          url: require('@/assets/2.jpg'),
+          isDir: true,
+          name: '目录2',
+          children: [],
         },
         {
-          name: '图片3',
-          url: require('@/assets/3.jpg'),
+          isDir: true,
+          name: '目录3',
+          children: [],
         },
         {
-          name: '图片4',
-          url: require('@/assets/4.jpg'),
+          isDir: true,
+          name: '目录4',
+          children: [],
         },
         {
-          name: '图片5',
-          url: require('@/assets/5.jpg'),
-        },
-        {
-          name: '图片6',
-          url: require('@/assets/6.jpg'),
-        },
-        {
-          name: '图片7',
-          url: require('@/assets/7.jpg'),
-        },
-        {
-          name: '图片8',
-          url: require('@/assets/8.jpg'),
-        },
-        {
-          name: '图片9',
-          url: require('@/assets/9.jpg'),
-        },
-        {
-          name: '图片10',
-          url: require('@/assets/10.jpg'),
-        },
-        {
-          name: '图片11',
-          url: require('@/assets/11.jpg'),
-        },
-        {
-          name: '图片12',
-          url: require('@/assets/12.jpg'),
-        },
-        {
-          name: '图片13',
-          url: require('@/assets/13.jpg'),
-        },
-        {
-          name: '图片14',
-          url: require('@/assets/14.jpg'),
-        },
-        {
-          name: '图片15',
-          url: require('@/assets/15.jpg'),
+          isDir: true,
+          name: '目录5',
+          children: [],
         },
       ],
       right: [
@@ -177,136 +147,67 @@ export default {
           url: require('@/assets/30.jpg'),
         },
       ],
-      left2: [
-        {
-          name: '图片1',
-          url: require('@/assets/1.jpg'),
-        },
-        {
-          name: '图片2',
-          url: require('@/assets/2.jpg'),
-        },
-        {
-          name: '图片3',
-          url: require('@/assets/3.jpg'),
-        },
-        {
-          name: '图片4',
-          url: require('@/assets/4.jpg'),
-        },
-        {
-          name: '图片5',
-          url: require('@/assets/5.jpg'),
-        },
-        {
-          name: '图片6',
-          url: require('@/assets/6.jpg'),
-        },
-        {
-          name: '图片7',
-          url: require('@/assets/7.jpg'),
-        },
-        {
-          name: '图片8',
-          url: require('@/assets/8.jpg'),
-        },
-        {
-          name: '图片9',
-          url: require('@/assets/9.jpg'),
-        },
-        {
-          name: '图片10',
-          url: require('@/assets/10.jpg'),
-        },
-        {
-          name: '图片11',
-          url: require('@/assets/11.jpg'),
-        },
-        {
-          name: '图片12',
-          url: require('@/assets/12.jpg'),
-        },
-        {
-          name: '图片13',
-          url: require('@/assets/13.jpg'),
-        },
-        {
-          name: '图片14',
-          url: require('@/assets/14.jpg'),
-        },
-        {
-          name: '图片15',
-          url: require('@/assets/15.jpg'),
-        },
-      ],
-      right2: [
-        {
-          name: '图片16',
-          url: require('@/assets/16.jpg'),
-        },
-        {
-          name: '图片17',
-          url: require('@/assets/17.jpg'),
-        },
-        {
-          name: '图片18',
-          url: require('@/assets/18.jpg'),
-        },
-        {
-          name: '图片19',
-          url: require('@/assets/19.jpg'),
-        },
-        {
-          name: '图片20',
-          url: require('@/assets/20.jpg'),
-        },
-        {
-          name: '图片21',
-          url: require('@/assets/21.jpg'),
-        },
-        {
-          name: '图片22',
-          url: require('@/assets/22.jpg'),
-        },
-        {
-          name: '图片23',
-          url: require('@/assets/23.jpg'),
-        },
-        {
-          name: '图片24',
-          url: require('@/assets/24.jpg'),
-        },
-        {
-          name: '图片25',
-          url: require('@/assets/25.jpg'),
-        },
-        {
-          name: '图片26',
-          url: require('@/assets/26.jpg'),
-        },
-        {
-          name: '图片27',
-          url: require('@/assets/27.jpg'),
-        },
-        {
-          name: '图片28',
-          url: require('@/assets/28.jpg'),
-        },
-        {
-          name: '图片29',
-          url: require('@/assets/29.jpg'),
-        },
-        {
-          name: '图片30',
-          url: require('@/assets/30.jpg'),
-        },
-      ],
     };
   },
   methods: {
+    checkRect(pos, rect) {
+      const {
+        width, height, top, left,
+      } = rect;
+      return pos[0] + 5 >= left
+        && pos[0] - 5 <= left + width
+        && pos[1] + 5 >= top
+        && pos[1] - 5 <= top + height;
+    },
     onRightInput(v) {
       console.log(v);
     },
+    onStart() {
+      //
+    },
+    onEnd(evt) {
+      console.log('END', evt);
+      this._clearDragCallback = null;
+      if (this._delayDragCallback) {
+        this._delayDragCallback();
+        this._delayDragCallback = null;
+      }
+    },
+    onDragInto(evt) {
+      console.log(evt);
+    },
+    // onMove(evt) {
+    //   // console.log('onMove', evt);
+    //   const { dragged, related, selected } = evt.data;
+    //   // debugger;
+    //
+    //   if (!dragged.isDir && related.isDir) {
+    //     this._clearDragCallback = this._clearDragCallback || throttle(() => {
+    //       [].forEach.call(evt.to.children, elm => elm.classList.
+    //       remove('sortable-related-active'));
+    //     }, 60);
+    //
+    //     [].forEach.call(evt.to.children, elm => elm.classList.
+    //     remove('sortable-related-active'));
+    //     evt.related.classList.add('sortable-related-active');
+    //
+    //     this._clearDragCallback2 = this._clearDragCallback2 || throttle(() => {
+    //       [].forEach.call(evt.to.children, elm => elm.classList.remove('sortable-related-active'));
+    //     }, 40);
+    //     this._delayDragCallback = () => related.children.push(...selected);
+    //     this._clearDragCallback(evt);
+    //   }
+    //   return (dragged.isDir && related.isDir) || (!dragged.isDir && !related.isDir);
+    // },
+  },
+  mounted() {
+    // window.addEventListener('mousemove', this._posListener = (e) => {
+    //   console.log(e);
+    //   this.pos = [e.pageX, e.pageY];
+    // });
+  },
+  beforeDestroy() {
+    // window.removeEventListener('mousemove', this._posListener);
   },
   filters: {
     stringify(val) {
@@ -383,6 +284,26 @@ export default {
         img {
           width: 150%;
           margin-left: -50px;
+        }
+      }
+
+      .dir-item {
+        width: 100%;
+        margin-right: 20px;
+        margin-bottom: 10px;
+        border: 1px solid #f7a864;
+        background: #ecdbd7;
+        padding: 10px 15px;
+        color: #000;
+        font-size: 16px;
+        border-radius: 3px;
+
+        &.sortable-drag-into-highlight,
+        &.sortable-chosen,
+        &.sortable-selected {
+          border: 1px solid #b6b9ca;
+          background: #e5e7f9;
+          color: #374abb;
         }
       }
     }

@@ -1,7 +1,7 @@
-import { Sortable, MultiDrag } from 'sortablejs';
+import { Sortable, MultiDrag, Swap } from 'sortablejs';
 import DragIntoPlugin from './DragIntoPlugin';
 
-Sortable.mount(new MultiDrag(), new DragIntoPlugin());
+Sortable.mount(new MultiDrag(), new DragIntoPlugin(), new Swap());
 
 const manager = {
   _nextId: 0,
@@ -58,6 +58,10 @@ export default {
       default: null,
     },
     onMove: {
+      type: Function,
+      default: null,
+    },
+    onDragInto: {
       type: Function,
       default: null,
     },
@@ -191,10 +195,22 @@ export default {
         }
         return true;
       },
+      onDragInto: (evt) => {
+        if (this.onDragInto) {
+          this.setAttachData(evt);
+          return this.onDragInto(evt);
+        }
+        return true;
+      },
       onEnd: (evt) => {
         if (this.onEnd) {
           this.onEnd(evt);
         }
+      },
+      beforeDragInto: () => {
+        // console.log(evt);
+        // debugger;
+        return true;
       },
     });
 
