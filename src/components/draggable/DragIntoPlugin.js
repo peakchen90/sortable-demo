@@ -89,8 +89,6 @@ function DragIntoPlugin() {
           originalEvent: evt,
           oldIndex,
           newIndex,
-          oldIndicies: [],
-          newIndicies: [],
         });
         if (result) {
           dragEl.parentNode.removeChild(dragEl);

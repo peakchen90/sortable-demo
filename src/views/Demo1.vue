@@ -174,7 +174,14 @@ export default {
       }
     },
     onDragInto(evt) {
-      console.log(evt);
+      const {
+        dragged, related, selected, selectedItems,
+      } = evt.data;
+      if (!dragged.isDir && related.isDir) {
+        related.children.push(...selected);
+        selectedItems.forEach(item => item.parentNode.removeChild(item));
+      }
+      return false;
     },
     // onMove(evt) {
     //   // console.log('onMove', evt);

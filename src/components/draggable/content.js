@@ -14,6 +14,7 @@ const manager = {
       id,
       instance,
       selected: [],
+      selectedItems: [],
     };
     this._instances.push(ele);
     return ele;
@@ -120,6 +121,7 @@ export default {
       evt.data = {
         current: this.current,
         selected: this.current.selected,
+        selectedItems: this.current.selectedItems,
         dragged: manager.find(from).instance.value[draggedIndex],
         related: manager.find(to).instance.value[relatedIndex],
       };
@@ -151,6 +153,7 @@ export default {
         } else {
           this.current.selected = [this.value[oldIndex]];
         }
+        this.current.selectedItems = evt.items;
         if (this.onStart) {
           this.onStart(evt);
         }
