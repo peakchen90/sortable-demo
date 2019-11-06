@@ -5,6 +5,7 @@
         v-model="left"
         custom-class="left-content"
         :onStart="onStart"
+        :beforeDragInto="beforeDragInto"
         :onDragInto="onDragInto"
         group="def">
         <h2 slot="header">LEFT</h2>
@@ -29,6 +30,7 @@
       <draggable
         v-model="right"
         :onDragInto="onDragInto"
+        :beforeDragInto="beforeDragInto"
         custom-class="right-content"
         group="def">
         <h2 slot="header">RIGHT</h2>
@@ -52,8 +54,6 @@
 </template>
 
 <script>
-// import throttle from 'lodash/throttle';
-// import debounce from 'lodash/debounce';
 export default {
   components: {},
   data() {
@@ -150,75 +150,42 @@ export default {
     };
   },
   methods: {
-    checkRect(pos, rect) {
-      const {
-        width, height, top, left,
-      } = rect;
-      return pos[0] + 5 >= left
-        && pos[0] - 5 <= left + width
-        && pos[1] + 5 >= top
-        && pos[1] - 5 <= top + height;
-    },
-    onRightInput(v) {
-      console.log(v);
-    },
     onStart() {
-      //
     },
-    onEnd(evt) {
-      console.log('END', evt);
-      this._clearDragCallback = null;
-      if (this._delayDragCallback) {
-        this._delayDragCallback();
-        this._delayDragCallback = null;
-      }
+    onEnd() {
     },
     onDragInto(evt) {
       const {
-        dragged, related, selected, selectedItems,
+        dragged, related, selected, selectedItems, selectedIndexes,
       } = evt.data;
       if (!dragged.isDir && related.isDir) {
         related.children.push(...selected);
         selectedItems.forEach(item => item.parentNode.removeChild(item));
+        [...selectedIndexes].reverse().forEach(i => this.right.splice(i, 1));
       }
       return false;
     },
-    // onMove(evt) {
-    //   // console.log('onMove', evt);
-    //   const { dragged, related, selected } = evt.data;
-    //   // debugger;
-    //
-    //   if (!dragged.isDir && related.isDir) {
-    //     this._clearDragCallback = this._clearDragCallback || throttle(() => {
-    //       [].forEach.call(evt.to.children, elm => elm.classList.
-    //       remove('sortable-related-active'));
-    //     }, 60);
-    //
-    //     [].forEach.call(evt.to.children, elm => elm.classList.
-    //     remove('sortable-related-active'));
-    //     evt.related.classList.add('sortable-related-active');
-    //
-    //     this._clearDragCallback2 = this._clearDragCallback2 || throttle(() => {
-    //       [].forEach.call(evt.to.children, elm => elm.classList.remove('sortable-related-active'));
-    //     }, 40);
-    //     this._delayDragCallback = () => related.children.push(...selected);
-    //     this._clearDragCallback(evt);
-    //   }
-    //   return (dragged.isDir && related.isDir) || (!dragged.isDir && !related.isDir);
-    // },
+    beforeDragInto(evt) {
+      const { dragged, related } = evt.data;
+      return !dragged.isDir && related.isDir;
+    },
   },
   mounted() {
-    // window.addEventListener('mousemove', this._posListener = (e) => {
-    //   console.log(e);
-    //   this.pos = [e.pageX, e.pageY];
-    // });
   },
   beforeDestroy() {
-    // window.removeEventListener('mousemove', this._posListener);
   },
   filters: {
     stringify(val) {
-      return JSON.stringify(val.map(i => i.name), null, 2);
+      const newVal = val.map((item) => {
+        if (item.children) {
+          return {
+            name: item.name,
+            children: item.children.map(i => i.name),
+          };
+        }
+        return item.name;
+      });
+      return JSON.stringify(newVal, null, 2);
     },
   },
 };

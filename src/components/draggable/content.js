@@ -70,6 +70,10 @@ export default {
       type: Function,
       default: null,
     },
+    beforeDragInto: {
+      type: Function,
+      default: null,
+    },
   },
 
   data() {
@@ -122,6 +126,7 @@ export default {
         current: this.current,
         selected: this.current.selected,
         selectedItems: this.current.selectedItems,
+        selectedIndexes: this.current.selectedIndexes,
         dragged: manager.find(from).instance.value[draggedIndex],
         related: manager.find(to).instance.value[relatedIndex],
       };
@@ -150,10 +155,13 @@ export default {
         const { oldIndex, oldIndicies } = evt;
         if (oldIndicies.length > 0) {
           this.current.selected = oldIndicies.map(i => this.value[i.index]);
+          this.current.selectedItems = evt.items;
+          this.current.selectedIndexes = oldIndicies.map(i => i.index);
         } else {
           this.current.selected = [this.value[oldIndex]];
+          this.current.selectedItems = [evt.item];
+          this.current.selectedIndexes = [oldIndex];
         }
-        this.current.selectedItems = evt.items;
         if (this.onStart) {
           this.onStart(evt);
         }
@@ -210,10 +218,12 @@ export default {
           this.onEnd(evt);
         }
       },
-      beforeDragInto: () => {
-        // console.log(evt);
-        // debugger;
-        return true;
+      beforeDragInto: (evt) => {
+        if (this.beforeDragInto) {
+          this.setAttachData(evt);
+          return this.beforeDragInto(evt);
+        }
+        return false;
       },
     });
 

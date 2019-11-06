@@ -4,7 +4,7 @@ const { toggleClass } = Sortable.utils;
 
 function throttle(fn, ms) {
   let timer = null;
-  return function (...args) {
+  return function delay(...args) {
     if (timer) {
       clearTimeout(timer);
     }
@@ -40,30 +40,44 @@ function DragIntoPlugin() {
     },
     dragOverValid(evt) {
       const {
-        sortable, target, changed, completed, cancel,
+        sortable, putSortable, target, parentEl,
+        dragEl, changed, completed, cancel,
+        oldIndex, newIndex,
       } = evt;
       const { options, el } = sortable;
       if (!options.dragInto) return;
 
+      const toSortable = putSortable || sortable;
+
       if (target && target !== el) {
         const prevDragIntoEl = lastDragIntoEl;
-        if (typeof options.beforeDragInto === 'function' && options.beforeDragInto(evt)) {
+        if (typeof options.beforeDragInto === 'function' && options.beforeDragInto({
+          sortable: this,
+          name: 'dragInto',
+          from: parentEl,
+          to: toSortable.el,
+          dragged: dragEl,
+          related: target,
+          originalEvent: evt,
+          oldIndex,
+          newIndex,
+        })) {
           toggleClass(target, options.dragIntoClass, true);
           lastDragIntoEl = target;
           delay(() => {
             lastDragIntoEl = null;
             toggleClass(target, options.dragIntoClass, false);
           });
+
+          changed();
+          completed(true);
+          cancel();
         }
 
         if (prevDragIntoEl && prevDragIntoEl !== lastDragIntoEl) {
           toggleClass(prevDragIntoEl, options.dragIntoClass, false);
         }
       }
-
-      changed();
-      completed(true);
-      cancel();
     },
     drop(evt) {
       const {
@@ -77,7 +91,17 @@ function DragIntoPlugin() {
         && dragEl !== lastDragIntoEl
         && options.dragInto
         && typeof options.beforeDragInto === 'function'
-        && options.beforeDragInto(evt)
+        && options.beforeDragInto({
+          sortable: this,
+          name: 'dragInto',
+          from: activeSortable.el,
+          to: toSortable.el,
+          dragged: dragEl,
+          related: lastDragIntoEl,
+          originalEvent: evt,
+          oldIndex,
+          newIndex,
+        })
       ) {
         const result = dispatchEvent({
           sortable: this,
