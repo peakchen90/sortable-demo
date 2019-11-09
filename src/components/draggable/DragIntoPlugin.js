@@ -24,7 +24,7 @@ function dispatchEvent(evt) {
 }
 
 let lastDragIntoEl = null;
-const delay = throttle(fn => fn(), 60);
+const delay = throttle(fn => fn(), 150);
 
 function DragIntoPlugin() {
   function DragInto() {
@@ -81,7 +81,7 @@ function DragIntoPlugin() {
     },
     drop(evt) {
       const {
-        activeSortable, putSortable, dragEl, oldIndex, newIndex,
+        sortable, putSortable, dragEl, oldIndex, newIndex,
       } = evt;
       const toSortable = putSortable || this.sortable;
       const options = toSortable.options;
@@ -94,7 +94,7 @@ function DragIntoPlugin() {
         && options.beforeDragInto({
           sortable: this,
           name: 'dragInto',
-          from: activeSortable.el,
+          from: sortable.el,
           to: toSortable.el,
           dragged: dragEl,
           related: lastDragIntoEl,
@@ -106,7 +106,7 @@ function DragIntoPlugin() {
         const result = dispatchEvent({
           sortable: this,
           name: 'dragInto',
-          from: activeSortable.el,
+          from: sortable.el,
           to: toSortable.el,
           dragged: dragEl,
           related: lastDragIntoEl,
