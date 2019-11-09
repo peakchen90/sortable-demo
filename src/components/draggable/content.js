@@ -1,4 +1,4 @@
-import { Sortable, MultiDrag, Swap } from 'sortablejs';
+import { Sortable, MultiDrag, Swap } from '@/common/sortable';
 import DragIntoPlugin from './DragIntoPlugin';
 
 Sortable.mount(new MultiDrag(), new DragIntoPlugin(), new Swap());

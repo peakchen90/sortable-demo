@@ -1,4 +1,4 @@
-import Sortable from 'sortablejs';
+import { Sortable } from '@/common/sortable';
 
 const { toggleClass } = Sortable.utils;
 
