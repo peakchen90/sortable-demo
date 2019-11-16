@@ -1,7 +1,7 @@
-import { Sortable, MultiDrag, Swap } from '@/common/sortable';
-import DragIntoPlugin from './DragIntoPlugin';
+import { Sortable, MultiDrag } from '@/common/sortable';
+import Delayable from './DelayablePlugin';
 
-Sortable.mount(new MultiDrag(), new DragIntoPlugin(), new Swap());
+Sortable.mount(new MultiDrag(), new Delayable());
 
 const manager = {
   _nextId: 0,
@@ -147,7 +147,7 @@ export default {
       sort: true,
       scroll: true,
       multiDrag: true,
-      dragInto: true,
+      delayable: true,
       animation: 150,
       multiDragKey: /Mac OS/.test(navigator.userAgent) ? 'Meta' : 'Control',
       emptyInsertThreshold: this.emptyInsertThreshold,
