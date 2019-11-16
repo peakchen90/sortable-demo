@@ -38,10 +38,22 @@ function highlightCreator() {
   return bar;
 }
 
-function moveBar(rect, targetEl) {
-  const { left, top } = rect || getRect(targetEl);
-  const { scrollLeft, scrollTop } = document.documentElement;
-  bar.style.transform = `translate(${left + scrollLeft}px, ${top + scrollTop}px)`;
+function getPageRect(...arg) {
+  const result = getRect(...arg);
+  result.left += document.documentElement.scrollLeft;
+  result.top += document.documentElement.scrollTop;
+  return result;
+}
+
+function moveBar(rect, targetEl, putRight = false) {
+  const { left, top, width } = rect || getPageRect(targetEl);
+  const offsetX = putRight ? width + 20 * 2 : 0;
+  bar.style.display = 'block';
+  bar.style.transform = `translate(${left + offsetX}px, ${top}px)`;
+}
+
+function hideBar() {
+  bar.style.display = 'none';
 }
 
 function DelayablePlugin() {
@@ -63,17 +75,29 @@ function DelayablePlugin() {
       const {
         sortable, putSortable, target, parentEl,
         dragEl, changed, completed, cancel,
-        oldIndex, newIndex, targetRect
+        oldIndex, newIndex, targetRect, originalEvent
       } = evt;
       cancel();
-      // if (dragEl === target) {
       console.log('dragOver:', evt);
-      // }
-      if (
-        target !== parentEl &&
-        target !== (putSortable || sortable).el
-      ) {
-        moveBar(targetRect, target);
+
+      if (target === sortable.el) {
+        if (target.children && target.children.length === 0) {
+          moveBar(null, target);
+        } else {
+          let lastEl = target.children[target.children.length - 1];
+          let lastRect = getPageRect(lastEl);
+          if (
+            originalEvent.pageX > lastRect.left &&
+            originalEvent.pageY > lastRect.top &&
+            originalEvent.pageY < lastRect.top + lastRect.height
+          ) {
+            moveBar(null, lastEl, true);
+          } else {
+            hideBar();
+          }
+        }
+      } else {
+        moveBar(null, target);
       }
     },
     dragOverValid(evt) {
@@ -85,7 +109,7 @@ function DelayablePlugin() {
         oldIndex, newIndex, targetRect
       } = evt;
 
-      let _rect = targetRect || getRect(target);
+      let _rect = targetRect || getPageRect(target);
       console.log(_rect);
 
 
@@ -125,6 +149,7 @@ function DelayablePlugin() {
       }
     },
     drop(evt) {
+      hideBar();
       const {
         sortable, putSortable, dragEl, oldIndex, newIndex,
       } = evt;

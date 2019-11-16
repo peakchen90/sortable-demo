@@ -136,6 +136,10 @@ export default {
             },
           ],
         },
+        {
+          name: '文件夹3',
+          children: [],
+        },
       ],
     };
   },
@@ -175,6 +179,7 @@ export default {
       .draggable-content {
         display: flex;
         flex-wrap: wrap;
+        min-height: 50px;
       }
 
       .img-item {
@@ -190,8 +195,8 @@ export default {
 
         &.sortable-chosen,
         &.sortable-selected {
-          border-color: #ff7459;
-          opacity: 0.8;
+          /*border-color: #ff7459;*/
+          opacity: 0.6;
         }
 
         .img-name {
