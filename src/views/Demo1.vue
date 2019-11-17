@@ -143,6 +143,17 @@ export default {
       ],
     };
   },
+  watch: {
+    data: {
+      deep: true,
+      handler(val) {
+        console.log('Updated:');
+        val.forEach((item) => {
+          console.log(item.name, ':', item.children.map(i => i.name).toString());
+        });
+      },
+    },
+  },
   methods: {
     onStart() {
     },
