@@ -3,23 +3,7 @@ import { getRect } from '@/common/sortable/src/utils';
 /* eslint-disable */
 const { toggleClass } = Sortable.utils;
 
-function throttle(fn, ms) {
-  let timer = null;
-  return function delay(...args) {
-    if (timer) {
-      clearTimeout(timer);
-    }
-    timer = setTimeout(() => {
-      fn.apply(this, args);
-      timer = null;
-    }, ms);
-  };
-}
-
 let lastDragOverEl = null;
-const delay = throttle(fn => fn(), 150);
-
-
 let bar = null;
 
 function highlightCreator() {
@@ -57,12 +41,9 @@ function hideBar() {
 
 function DelayablePlugin() {
   function Delayable() {
-    if (!bar) {
-      bar = highlightCreator();
-    }
-
+    bar = highlightCreator();
     this.defaults = {
-      dragIntoClass: 'sortable-delayable',
+      beforeDrop: null
     };
   }
 
@@ -72,9 +53,7 @@ function DelayablePlugin() {
     },
     dragOver(evt) {
       const {
-        activeSortable, sortable, putSortable, target, parentEl,
-        dragEl, changed, completed, cancel,
-        oldIndex, newIndex, targetRect, originalEvent
+        sortable, target, changed, completed, cancel, originalEvent
       } = evt;
 
       // console.log('dragOver:', evt);
@@ -118,12 +97,10 @@ function DelayablePlugin() {
     },
     drop(evt) {
       const {
-        activeSortable, sortable, putSortable, dragEl, oldIndex, newIndex,
+        activeSortable, sortable, putSortable, dragEl
       } = evt;
 
       if (!sortable.options.delayable) return;
-
-      hideBar();
 
       if (!lastDragOverEl || dragEl === lastDragOverEl) return;
 
@@ -132,21 +109,34 @@ function DelayablePlugin() {
       const insertAfter = lastDragOverEl === toEl;
       const isSameGroup = toSortable === activeSortable;
 
-      console.log(dragEl, lastDragOverEl, evt);
+      const _lastDragOverEl = lastDragOverEl;
 
-      toSortable.captureAnimationState();
-      if (!isSameGroup) activeSortable.captureAnimationState();
+      function done(changed) {
+        hideBar();
 
-      if (insertAfter) {
-        dragEl.parentNode.removeChild(dragEl);
-        toEl.appendChild(dragEl);
-      } else {
-        dragEl.parentNode.removeChild(dragEl);
-        lastDragOverEl.parentNode.insertBefore(dragEl, lastDragOverEl);
+        if (!changed) return;
+
+        toSortable.captureAnimationState();
+        if (!isSameGroup) activeSortable.captureAnimationState();
+
+        if (insertAfter) {
+          dragEl.parentNode.removeChild(dragEl);
+          toEl.appendChild(dragEl);
+        } else {
+          dragEl.parentNode.removeChild(dragEl);
+          _lastDragOverEl.parentNode.insertBefore(dragEl, _lastDragOverEl);
+        }
+
+        toSortable.animateAll();
+        if (!isSameGroup) activeSortable.animateAll();
       }
 
-      toSortable.animateAll();
-      if (!isSameGroup) activeSortable.animateAll();
+      const beforeDrop = toSortable.options.beforeDrop;
+      if (beforeDrop) {
+        beforeDrop(evt, done);
+      } else {
+        done(true);
+      }
     },
     nulling() {
       lastDragOverEl = null;

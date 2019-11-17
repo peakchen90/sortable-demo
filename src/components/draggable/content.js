@@ -166,6 +166,17 @@ export default {
           this.onStart(evt);
         }
       },
+      beforeDrop: (evt, done) => {
+        const { activeSortable, putSortable, sortable } = evt;
+        const toSortable = putSortable || sortable;
+        if (activeSortable !== toSortable) {
+          this.$confirm('确认移动吗？')
+            .then(() => done(true))
+            .catch(() => done(false));
+        } else {
+          done(true);
+        }
+      },
       onUpdate: (evt) => {
         this.$nextTick(() => {
           if (this._ignoreUpdate) {
