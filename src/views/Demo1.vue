@@ -195,7 +195,7 @@ export default {
 
         &.sortable-chosen,
         &.sortable-selected {
-          /*border-color: #ff7459;*/
+          border-color: #a35810;
           opacity: 0.6;
         }
 

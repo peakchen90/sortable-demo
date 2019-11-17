@@ -148,7 +148,7 @@ export default {
       scroll: true,
       multiDrag: true,
       delayable: true,
-      animation: 150,
+      animation: 250,
       multiDragKey: /Mac OS/.test(navigator.userAgent) ? 'Meta' : 'Control',
       emptyInsertThreshold: this.emptyInsertThreshold,
       onStart: (evt) => {
