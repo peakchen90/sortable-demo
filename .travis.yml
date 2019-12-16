@@ -14,7 +14,6 @@ jobs:
   include:
     - stage: deploy
       name: "Deploying to github pages"
-      node_js: "12"
       script:
         - yarn run build
       deploy:
