@@ -112,6 +112,10 @@ function DelayablePlugin() {
       const multiDrag = sortable.multiDrag || {};
       let multiDragElements = (multiDrag.multiDragElements || []).slice();
 
+      if (multiDragElements.length === 0) {
+        multiDragElements.push(dragEl);
+      }
+
       const _lastDragOverEl = lastDragOverEl;
 
       function done(changed) {
