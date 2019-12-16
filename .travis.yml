@@ -10,19 +10,16 @@ install:
   - npm install -g yarn
   - yarn install
 
-jobs:
-  include:
-    - stage: deploy
-      name: "Deploying to github pages"
-      script:
-        - yarn run build
-      deploy:
-        provider: pages
-        github_token: $GITHUB_TOKEN
-        skip_cleanup: true
-        local_dir: dist
-        on:
-          branch: master
+script:
+  - yarn run build
+
+deploy:
+  provider: pages
+  github_token: $GITHUB_TOKEN
+  skip_cleanup: true
+  local_dir: dist
+  on:
+    branch: master
 
 notifications:
   email: false
