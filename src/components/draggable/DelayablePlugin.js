@@ -109,6 +109,9 @@ function DelayablePlugin() {
       const insertAfter = lastDragOverEl === toEl;
       const isSameGroup = toSortable === activeSortable;
 
+      const multiDrag = sortable.multiDrag || {};
+      let multiDragElements = (multiDrag.multiDragElements || []).slice();
+
       const _lastDragOverEl = lastDragOverEl;
 
       function done(changed) {
@@ -120,12 +123,17 @@ function DelayablePlugin() {
         if (!isSameGroup) activeSortable.captureAnimationState();
 
         if (insertAfter) {
-          dragEl.parentNode.removeChild(dragEl);
-          toEl.appendChild(dragEl);
+          multiDragElements.forEach(ele => {
+            ele.parentNode.removeChild(ele);
+            toEl.appendChild(ele);
+          });
         } else {
-          dragEl.parentNode.removeChild(dragEl);
-          _lastDragOverEl.parentNode.insertBefore(dragEl, _lastDragOverEl);
+          multiDragElements.forEach(ele => {
+            ele.parentNode.removeChild(ele);
+            _lastDragOverEl.parentNode.insertBefore(ele, _lastDragOverEl);
+          });
         }
+        multiDragElements = null;
 
         toSortable.animateAll();
         if (!isSameGroup) activeSortable.animateAll();
