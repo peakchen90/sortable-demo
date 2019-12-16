@@ -1,6 +1,6 @@
 module.exports = {
   publicPath: '',
-  outputDir: 'docs',
+  outputDir: 'dist',
   chainWebpack: (config) => {
     config.resolve.extensions.add('.vue');
   },
