@@ -116,6 +116,8 @@ function DelayablePlugin() {
         multiDragElements.push(dragEl);
       }
 
+      if (multiDragElements.some(ele => ele === lastDragOverEl)) return;
+
       const _lastDragOverEl = lastDragOverEl;
 
       function done(changed) {

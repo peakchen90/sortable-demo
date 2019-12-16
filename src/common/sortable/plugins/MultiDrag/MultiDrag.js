@@ -239,11 +239,11 @@ function MultiDragPlugin() {
 
           multiDragElements.forEach(multiDragElement => {
             if (multiDragElement === dragEl) return;
-            setRect(multiDragElement, dragRectAbsolute);
+            // setRect(multiDragElement, dragRectAbsolute);
 
             // Move element(s) to end of parentEl so that it does not interfere with multi-drag clones insertion if they are inserted
             // while folding, and so that we can capture them again because old sortable will no longer be fromSortable
-            parentEl.appendChild(multiDragElement);
+            // parentEl.appendChild(multiDragElement);
           });
 
           folding = true;
@@ -253,7 +253,7 @@ function MultiDragPlugin() {
         if (!isOwner) {
           // Only remove if not folding (folding will remove them anyways)
           if (!folding) {
-            removeMultiDragElements();
+            // removeMultiDragElements();
           }
 
           if (multiDragElements.length > 1) {
@@ -295,7 +295,7 @@ function MultiDragPlugin() {
     dragOverAnimationComplete() {
       if (folding) {
         folding = false;
-        removeMultiDragElements();
+        // removeMultiDragElements();
       }
     },
 

@@ -144,7 +144,7 @@ export default {
   mounted() {
     this.sortable = Sortable.create(this.$refs.content, {
       group: this.group,
-      sort: true,
+      sort: false,
       scroll: true,
       multiDrag: true,
       delayable: true,
